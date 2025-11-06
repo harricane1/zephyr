@@ -454,12 +454,13 @@ struct isotp_recv_ctx {
 	uint8_t bs;
 	uint8_t wft;
 	uint8_t sn_expected: 4;
-	uint8_t ctx_position: 2;
+	uint8_t ctx_chain: 3;
 };
 
 enum isotp_context_position {
-	ISOTP_CONTEXT_POSITION_FIRST = 1,
-	ISOTP_CONTEXT_POSITION_LAST = 2
+	ISOTP_CONTEXT_CHAIN_ENABLED = 1,
+	ISOTP_CONTEXT_POSITION_FIRST = 2,
+	ISOTP_CONTEXT_POSITION_LAST = 4
 };
 
 /** @endcond */

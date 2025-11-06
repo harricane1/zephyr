@@ -556,7 +556,7 @@ static void receive_can_rx(const struct device *dev, struct can_frame *frame, vo
 	}
 
 	struct isotp_recv_ctx *rctx = (struct isotp_recv_ctx *)arg;
-	if (rctx->ctx_position == ISOTP_CONTEXT_POSITION_FIRST) {
+	if (rctx->ctx_chain & ISOTP_CONTEXT_CHAIN_ENABLED) {
 		bool found = false;
 		for (int i = 0; i < 255; i++) {
 			if ((rctx->rx_addr.ext_id & 0xFF) == (frame->id & 0xFF)) {
@@ -564,7 +564,7 @@ static void receive_can_rx(const struct device *dev, struct can_frame *frame, vo
 				break;
 			}
 
-			if (rctx->ctx_position & ISOTP_CONTEXT_POSITION_LAST) {
+			if (rctx->ctx_chain & ISOTP_CONTEXT_POSITION_LAST) {
 				break;
 			}
 
@@ -669,7 +669,8 @@ int isotp_bind(struct isotp_recv_ctx *rctx, const struct device *can_dev,
 		return ISOTP_NO_NET_BUF_LEFT;
 	}
 
-	if (rctx->ctx_position & ISOTP_CONTEXT_POSITION_FIRST) {
+	if (!(rctx->ctx_chain & ISOTP_CONTEXT_CHAIN_ENABLED) ||
+	    (rctx->ctx_chain & ISOTP_CONTEXT_POSITION_FIRST)) {
 		ret = add_ff_sf_filter(rctx);
 		if (ret) {
 			LOG_ERR("Can't add filter for binding");
